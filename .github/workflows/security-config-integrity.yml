@@ -1,0 +1,21 @@
+name: Configuration integrity
+on:
+  push:
+    branches: [security/remove-config-tail-2026-11-13]
+  pull_request:
+    paths:
+      - electron.vite.config.mjs
+      - .github/tests/test_config_integrity.py
+      - .github/workflows/security-config-integrity.yml
+permissions:
+  contents: read
+jobs:
+  static-config-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Validate config bytes without Node, install, build or lint
+        run: python3 -m unittest discover -s .github/tests -p test_config_integrity.py -v
